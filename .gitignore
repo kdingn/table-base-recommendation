@@ -1,5 +1,5 @@
 # tablebaserec
-tablebaserec/data/
+tablebaserec/data/*
 tablebaserec/config.yaml
 tablebaserec/test.ipynb
 tablebaserec/modules/__pycache__
