@@ -82,7 +82,7 @@ def lgbm_predict(x_train, y_train, x_test):
     {col_idx:x_train.index, col_lk:y_train}
   ).reset_index(drop=True)
   pred_test = pd.DataFrame(
-    {col_idx:x_test.index, col_lk:model.predict_proba(x_test).T[0].T}
+    {col_idx:x_test.index, col_lk:model.predict_proba(x_test).T[1].T}
   ).reset_index(drop=True)
   pred = pd.concat([pred_train, pred_test])
   return pred
@@ -102,10 +102,7 @@ def main():
   # model creation
   pred = lgbm_predict(x_train, y_train, x_test)
   # merge
-  df = df.merge(pred, on=col_idx)
+  df = df.drop(col_lk, axis=1).merge(pred, on=col_idx)
   # return
   return df
-
-
-
 
