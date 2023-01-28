@@ -1,0 +1,17 @@
+columns :
+  # common
+  id : "id"
+  # master
+  item : "title"
+  url : "url"
+  tags : "tags"
+  categories :
+  - "author"
+  # transaction
+  like : "like"
+  update : "update"
+
+datas :
+  master : "data/master.parquet"
+  transaction : "data/transaction.parquet"
+  prediction : "data/prediction.parquet"
