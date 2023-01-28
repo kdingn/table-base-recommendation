@@ -7,18 +7,23 @@ path_yaml = "config.yaml"
 with open(path_yaml) as file:
     config = yaml.safe_load(file)
 
-col_itm = config["columns"]["item"]
-col_url = config["columns"]["url"]
 col_lk = config["columns"]["like"]
-
 df = pd.read_parquet(config["datas"]["prediction"])
+df = df.rename(
+    columns={
+        config["columns"]["id"]: "id",
+        config["columns"]["item"]: "item",
+        config["columns"]["url"]: "url",
+    }
+)
+
 app = Flask(__name__)
 app.config["JSON_AS_ASCII"] = False
 CORS(app)
 
 
 @app.route("/datas", methods=["GET"])
-def images():
+def datas():
     contentsToShow = str(request.args.get("contentsToShow"))
     contentsIn1Page = int(request.args.get("contentsIn1Page"))
     page = int(request.args.get("page"))
@@ -36,6 +41,13 @@ def images():
     tmp = tmp[(page - 1) * contentsIn1Page + 1 : page * contentsIn1Page]
     # return
     return tmp.T.to_json()
+
+
+@app.route("/image", methods=["GET"])
+def images():
+    index = int(request.args.get("id"))
+    image = send_file(f"./images/{index}.jpg")
+    return image
 
 
 if __name__ == "__main__":

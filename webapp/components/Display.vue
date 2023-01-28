@@ -3,7 +3,7 @@
     <b-container>
       <b-row>
         <b-col v-for="el in df">
-          <a :href="el.url">{{el.title}}</a>
+          <a :href="el.url">{{el.id}}{{el.item}}</a>
         </b-col>
       </b-row>
     </b-container>
