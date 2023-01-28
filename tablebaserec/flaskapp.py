@@ -38,7 +38,7 @@ def datas():
     # 属性による絞り込み
 
     # page の絞り込み
-    tmp = tmp[(page - 1) * contentsIn1Page + 1 : page * contentsIn1Page]
+    tmp = tmp[(page - 1) * contentsIn1Page + 1 : page * contentsIn1Page + 1]
     # return
     return tmp.T.to_json()
 
@@ -46,7 +46,7 @@ def datas():
 @app.route("/image", methods=["GET"])
 def images():
     index = int(request.args.get("id"))
-    image = send_file(f"./images/{index}.jpg")
+    image = send_file(f"./images/{index}.png")
     return image
 
 

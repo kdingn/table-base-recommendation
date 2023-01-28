@@ -1,8 +1,7 @@
 import lightgbm as lgbm
+import modules
 import pandas as pd
 from sklearn import preprocessing
-
-import modules
 
 # config
 config = modules.config
@@ -15,6 +14,9 @@ col_tgs = config["columns"]["tags"]
 col_cts = config["columns"]["categories"]
 col_all = [col_idx, col_itm, col_url, col_tgs]
 col_all.extend(col_cts)
+col_idxcts = [col_idx]
+col_idxcts.extend(col_cts)
+
 # trn系
 path_tran = config["datas"]["transaction"]
 col_ud = config["columns"]["update"]
@@ -111,6 +113,8 @@ def main():
     pred = lgbm_predict(x_train, y_train, x_test)
     # merge
     df = df.drop(col_lk, axis=1).merge(pred, on=col_idx)
+    # inverse label encoding
+    df = df.drop(col_cts, axis=1).merge(dfm[col_idxcts], on=col_idx)
     # output
     df.to_parquet(path_pred)
     # return
