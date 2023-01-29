@@ -1,6 +1,6 @@
 import pandas as pd
 import yaml
-from flask import Flask, jsonify, request, send_file
+from flask import Flask, request, send_file
 from flask_cors import CORS
 
 path_yaml = "config.yaml"
@@ -63,4 +63,4 @@ def categories():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="192.168.1.3", port=5000, debug=True)

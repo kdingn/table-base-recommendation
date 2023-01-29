@@ -112,10 +112,10 @@ export default {
   },
   methods:{
     imagePath(index) {
-        return "http://localhost:5000/image?id=" + parseInt(index)
+        return "http://192.168.1.3:5000/image?id=" + parseInt(index)
     },
     updateDf() {
-      var url = new URL("http://localhost:5000/datas")
+      var url = new URL("http://192.168.1.3:5000/datas")
       url.searchParams.append("page", this.page)
       url.searchParams.append("contentsToShow", this.contentsToShow)
       url.searchParams.append("contentsIn1Page", this.contentsIn1Page)
@@ -128,7 +128,7 @@ export default {
   mounted() {
     this.updateDf()
     axios
-      .get("http://localhost:5000/categories")
+      .get("http://192.168.1.3:5000/categories")
       .then((response) => (this.categories = keysFromObj(response.data)))
   }
 }
