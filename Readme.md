@@ -44,7 +44,7 @@
 
 ※ 注意
 下記スクリプト内で 192.168.1.3 をホストに指定しているため，
-環境によっては正常に同さしない可能性あり
+環境によっては正常に動作しない可能性あり
 - /tablebaserec/flaskapp.py
 - /webapp/components/Display.vue
 - /webapp/package.json
