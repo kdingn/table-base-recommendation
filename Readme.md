@@ -48,3 +48,7 @@
 - /tablebaserec/flaskapp.py
 - /webapp/components/Display.vue
 - /webapp/package.json
+
+## 実行環境バージョン
+- node : v16.13.1
+- python : 3.9.6
