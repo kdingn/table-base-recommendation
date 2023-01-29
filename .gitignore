@@ -2,7 +2,7 @@
 tablebaserec/data/*
 tablebaserec/images/*
 tablebaserec/config.yaml
-tablebaserec/test.ipynb
+tablebaserec/*.ipynb
 tablebaserec/modules/__pycache__
 
 # webapp
