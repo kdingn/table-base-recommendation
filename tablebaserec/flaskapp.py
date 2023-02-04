@@ -1,11 +1,19 @@
 import pandas as pd
 import yaml
+import json
 from flask import Flask, request, send_file
 from flask_cors import CORS
 
 path_yaml = "config.yaml"
 with open(path_yaml) as file:
     config = yaml.safe_load(file)
+
+infos = ["hostname", "port_flask"]
+settings = {}
+for info in infos:
+    f = open(f'../setting/{info}.txt', 'r')
+    settings[info] = f.read()
+    f.close()
 
 col_ct = config["columns"]["categories"][0]
 col_lk = config["columns"]["like"]
@@ -63,4 +71,4 @@ def categories():
 
 
 if __name__ == "__main__":
-    app.run(host="192.168.1.3", port=5000, debug=True)
+    app.run(host=settings["hostname"], port=settings["port_flask"], debug=True)
