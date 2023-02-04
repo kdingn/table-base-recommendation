@@ -15,7 +15,6 @@ for info in infos:
     settings[info] = f.read()
     f.close()
 
-col_ct = config["columns"]["categories"][0]
 col_lk = config["columns"]["like"]
 df = pd.read_parquet(config["datas"]["prediction"])
 df = df.rename(
@@ -23,6 +22,7 @@ df = df.rename(
         config["columns"]["id"]: "id",
         config["columns"]["item"]: "item",
         config["columns"]["url"]: "url",
+        config["columns"]["categories"][0]: "category"
     }
 )
 
@@ -46,7 +46,7 @@ def datas():
         tmp = tmp[(tmp[col_lk] == 1) | (tmp[col_lk] == 0)].copy()
     # 属性による絞り込み
     if category != "":
-        tmp = tmp[tmp[col_ct] == category]
+        tmp = tmp[tmp["category"] == category]
     # page の絞り込み
     tmp = tmp.sort_values(col_lk, ascending=False)
     tmp = tmp.reset_index(drop=True)
@@ -65,7 +65,7 @@ def image():
 @app.route("/categories", methods=["GET"])
 def categories():
     cts = (
-        df[[col_ct, col_lk]].groupby(col_ct).mean().sort_values(col_lk, ascending=False)
+        df[["category", col_lk]].groupby("category").mean().sort_values(col_lk, ascending=False)
     )
     return cts[col_lk].to_json()
 

@@ -60,7 +60,7 @@
             </a>
             <div>
               {{ el.item }}
-              ({{ el.author }})
+              ({{ el.category }})
             </div>
           </b-card>
         </b-col>
