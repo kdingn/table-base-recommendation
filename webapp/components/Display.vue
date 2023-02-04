@@ -82,8 +82,11 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from "axios"
+import hostname from "raw-loader!../../setting/hostname.txt"
+import port from "raw-loader!../../setting/port_flask.txt"
 
+var endpoint = "http://" + hostname + ":" + port
 var defaultPage = 1
 var defaultContentsToShow = ""
 var defaultContentsIn1Page = 7*14
@@ -112,10 +115,10 @@ export default {
   },
   methods:{
     imagePath(index) {
-        return "http://192.168.1.3:5000/image?id=" + parseInt(index)
+        return endpoint + "/image?id=" + parseInt(index)
     },
     updateDf() {
-      var url = new URL("http://192.168.1.3:5000/datas")
+      var url = new URL(endpoint + "/datas")
       url.searchParams.append("page", this.page)
       url.searchParams.append("contentsToShow", this.contentsToShow)
       url.searchParams.append("contentsIn1Page", this.contentsIn1Page)
@@ -128,7 +131,7 @@ export default {
   mounted() {
     this.updateDf()
     axios
-      .get("http://192.168.1.3:5000/categories")
+      .get(endpoint + "/categories")
       .then((response) => (this.categories = keysFromObj(response.data)))
   }
 }
