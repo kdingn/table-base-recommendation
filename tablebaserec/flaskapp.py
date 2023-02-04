@@ -64,9 +64,18 @@ def image():
 
 @app.route("/categories", methods=["GET"])
 def categories():
+    cts = df[["category", col_lk]].copy()
+    cts0 = pd.DataFrame({"category":cts["category"].unique()})
+    cts0[col_lk] = 0
+    cts = pd.concat([cts, cts0])
     cts = (
-        df[["category", col_lk]].groupby("category").mean().sort_values(col_lk, ascending=False)
+        cts.groupby("category", as_index=False).mean().sort_values(col_lk, ascending=False)
     )
+    cts = cts[cts["category"]!=""]
+    cts = pd.concat([
+        cts, pd.DataFrame({"category": [""], col_lk: [2]})
+    ])
+    cts = cts.set_index("category")
     return cts[col_lk].to_json()
 
 
