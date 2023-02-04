@@ -28,6 +28,7 @@
 
 ## 実行方法
 ### 準備
+- /setting/*.txt に サーバーを立てる `hostname`, `port` を記述
 - /tablebaserec/config.yaml の設定
   - categories は現在 1 カテゴリーのみに対応
   - また "author" をカテゴリー名称としている
@@ -35,19 +36,12 @@
 
 ### サーバーの起動
 - front-end サーバーの起動
-  - /webapp/ で ```npm run dev``` を実行
+  - /webapp/ で `bash start.sh` を実行
 - back-end サーバーの起動
-  - /trablebaserec/ で ```python flask.py``` を実行
+  - /trablebaserec/ で `python flask.py` を実行
 
 ### 接続
-- 任意のブラウザで 192.168.1.3:3000 で接続
-
-※ 注意
-下記スクリプト内で 192.168.1.3 をホストに指定しているため，
-環境によっては正常に動作しない可能性あり
-- /tablebaserec/flaskapp.py
-- /webapp/components/Display.vue
-- /webapp/package.json
+- 任意のブラウザから `hostname:port_nuxt` で接続
 
 ## 実行環境バージョン
 - node : v16.13.1
