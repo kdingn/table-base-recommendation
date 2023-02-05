@@ -87,6 +87,14 @@
         @change="updateDf()"
       />
     </b-container>
+    <b-container
+      class="d-flex justify-content-center my-2"
+    >
+    <b-button
+        variant="primary"
+        @click="scrollTop"
+      >scroll to top</b-button>
+    </b-container>
   </div>
 </template>
 
@@ -139,6 +147,12 @@ export default {
       axios
         .get(url)
         .then((response) => (this.df = response.data))
+    },
+    scrollTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      })
     }
   },
   mounted() {
