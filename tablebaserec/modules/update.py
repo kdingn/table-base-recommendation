@@ -11,11 +11,9 @@ col_idx = config["columns"]["id"]
 col_itm = config["columns"]["item"]
 col_url = config["columns"]["url"]
 col_tgs = config["columns"]["tags"]
-col_cts = config["columns"]["categories"]
-col_all = [col_idx, col_itm, col_url, col_tgs]
-col_all.extend(col_cts)
-col_idxcts = [col_idx]
-col_idxcts.extend(col_cts)
+col_cat = config["columns"]["category"]
+col_all = [col_idx, col_itm, col_url, col_tgs, col_cat]
+col_idxcts = [col_idx, col_cat]
 
 # trn系
 path_tran = config["datas"]["transaction"]
@@ -32,7 +30,7 @@ def add_one_hot_tags(df):
     tags = dftags.sum().sort_values(ascending=False)
     tags = tags[tags > 1]
     tags_cnt = min(
-        len(tags), int(len(dftags) / 10), 100  # tag の数  # 行数の10分の1  # べたうちでタグの最大数量を決定
+        len(tags), int(len(dftags) / 10), 200  # tag の数  # 行数の10分の1  # べたうちでタグの最大数量を決定
     )
     tags = tags[:tags_cnt]
     tags = list(tags.index)
@@ -44,9 +42,8 @@ def add_one_hot_tags(df):
 
 # label encoding
 def label_encoding(df):
-    for col_ct in col_cts:
-        le = preprocessing.LabelEncoder()
-        df[col_ct] = le.fit_transform(df[col_ct])
+    le = preprocessing.LabelEncoder()
+    df[col_cat] = le.fit_transform(df[col_cat])
     return df
 
 
@@ -114,7 +111,7 @@ def main():
     # merge
     df = df.drop(col_lk, axis=1).merge(pred, on=col_idx)
     # inverse label encoding
-    df = df.drop(col_cts, axis=1).merge(dfm[col_idxcts], on=col_idx)
+    df = df.drop(col_cat, axis=1).merge(dfm[col_idxcts], on=col_idx)
     # output
     df.to_parquet(path_pred)
     # return

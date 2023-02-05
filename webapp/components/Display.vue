@@ -8,7 +8,15 @@
           </h3>
           <b-row class="float-left">
             <b-col>
-              ⚙ DatasetType<br>
+              ⚙ Mode<br>
+              <b-form-select
+                v-model="mode"
+                :options="['View', 'Review']"
+                class="mt-2"
+              />
+            </b-col>
+            <b-col>
+              📚 Dataset<br>
               <b-form-select
                 v-model="contentsToShow"
                 :options="['', 'train']"
@@ -26,6 +34,15 @@
               />
             </b-col>
             <b-col>
+              🎯 Tag<br>
+              <b-form-select
+                v-model="tag"
+                :options="tags"
+                @change="updateDf()"
+                class="mt-2"
+              />
+            </b-col>
+            <b-col>
               📖 Page<br>
               <b-form-spinbutton
                 id="top_page_select"
@@ -36,6 +53,22 @@
                 @change="updateDf()"
                 class="mt-2"
               />
+            </b-col>
+            <b-col>
+              ⚒ Re-training
+              <br>
+              <b-button
+                class="mt-2"
+                variant="primary"
+                @click="retraining()"
+                :disabled="loading"
+              >
+                <div v-if="loading">
+                  <b-spinner small type="grow"></b-spinner>
+                  Loading...
+                </div>
+                <div v-else>Start training</div>
+              </b-button>
             </b-col>
           </b-row>
         </b-container>
@@ -51,6 +84,14 @@
             【{{ n+(page-1)*contentsIn1Page+1 }}.】
             {{ el.like.toFixed(3) }}
           </div>
+          <div v-if="mode==='Review'">
+            <b-button variant="success" size="sm" class="ml-1 my-1"
+              @click="updateLike(el.id, 1)"
+            >like</b-button>
+            <b-button variant="danger" size="sm" class="m-1"
+              @click="updateLike(el.id, 0)"
+            >not like</b-button>
+          </div>
             <a :href="el.url" target="_blank">
               <b-img-lazy
                 :src="imagePath(el.id)"
@@ -60,7 +101,7 @@
             </a>
             <div>
               {{ el.item }}
-              ({{ el.author }})
+              ({{ el.category }})
             </div>
           </b-card>
         </b-col>
@@ -78,6 +119,15 @@
         @change="updateDf()"
       />
     </b-container>
+    <b-container
+      class="d-flex justify-content-center my-2"
+    >
+    <b-button
+        variant="secondary"
+        @click="scrollTop"
+        size="sm"
+      >scroll to top</b-button>
+    </b-container>
   </div>
 </template>
 
@@ -87,10 +137,12 @@ import hostname from "raw-loader!../../setting/hostname.txt"
 import port from "raw-loader!../../setting/port_flask.txt"
 
 var endpoint = "http://" + hostname + ":" + port
+var defaultMode = "View"
 var defaultPage = 1
 var defaultContentsToShow = ""
 var defaultContentsIn1Page = 7*14
 var defaultCategory = ""
+var defaultTag = ""
 
 // function to get keys from sorted obj by values
 function keysFromObj(fruits){
@@ -105,12 +157,16 @@ function keysFromObj(fruits){
 export default {
   data() {
     return {
+      mode: defaultMode,
       page: defaultPage,
       contentsToShow: defaultContentsToShow,
       contentsIn1Page: defaultContentsIn1Page,
       category: defaultCategory,
+      tag: defaultTag,
       categories: [],
+      tags: [],
 			df: [],
+      loading: false
     }
   },
   methods:{
@@ -123,9 +179,32 @@ export default {
       url.searchParams.append("contentsToShow", this.contentsToShow)
       url.searchParams.append("contentsIn1Page", this.contentsIn1Page)
       url.searchParams.append("category", this.category)
+      url.searchParams.append("tag", this.tag)
       axios
         .get(url)
         .then((response) => (this.df = response.data))
+    },
+    scrollTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      })
+    },
+    updateLike(id, like) {
+      var url = new URL(endpoint + "/updatelike")
+      url.searchParams.append("id", id)
+      url.searchParams.append("like", like)
+      axios.get(url).then((res)=>{
+        this.updateDf()
+      })
+    },
+    retraining(){
+      this.loading=true
+      var url = new URL(endpoint + "/retraining")
+      axios.get(url).then((res)=>{
+        this.updateDf()
+        this.loading=false
+      })
     }
   },
   mounted() {
@@ -133,6 +212,9 @@ export default {
     axios
       .get(endpoint + "/categories")
       .then((response) => (this.categories = keysFromObj(response.data)))
+      axios
+      .get(endpoint + "/tags")
+      .then((response) => (this.tags = response.data))
   }
 }
 </script>
