@@ -60,9 +60,14 @@ def datas():
         tmp = tmp[tmp["category"] == category]
     # Tagによる絞り込み
     if tag != "":
-        tmp = tmp[tmp[tag] == 1]    
+        tmp = tmp[tmp[tag] == 1]
+    # like, update 順に sort
+    dftr = pd.read_parquet(config["datas"]["transaction"])
+    dftr = dftr.sort_values("update").drop_duplicates(col_id, keep="last")
+    dftr = dftr[[col_id, "update"]]
+    tmp = tmp.merge(dftr, how="left", on=col_id)
     # page の絞り込み
-    tmp = tmp.sort_values([col_lk, "item"], ascending=False)
+    tmp = tmp.sort_values([col_lk, "update"], ascending=False)
     tmp = tmp.reset_index(drop=True)
     tmp = tmp[(page - 1) * contentsIn1Page : page * contentsIn1Page]
     # return
@@ -111,9 +116,9 @@ def updatelike():
     # transaction の更新
     rows = pd.DataFrame({col_id: [idx]})
     rows[col_lk] = like
-    rows["update"] = get_now()
+    rows["update"] = str(get_now())
     transaction = pd.concat([transaction, rows]).reset_index(drop=True)
-    # pd.to_parquet(config["datas"]["transaction"], index=False)
+    transaction.to_parquet(config["datas"]["transaction"], index=False)
     # prediction の更新
     prediction.loc[prediction[col_id]==idx, col_lk] = like
     prediction.to_parquet(config["datas"]["prediction"], index=False)    
