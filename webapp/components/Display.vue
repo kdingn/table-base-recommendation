@@ -61,7 +61,14 @@
                 class="mt-2"
                 variant="primary"
                 @click="retraining()"
-              >Start training</b-button>
+                :disabled="loading"
+              >
+                <div v-if="loading">
+                  <b-spinner small type="grow"></b-spinner>
+                  Loading...
+                </div>
+                <div v-else>Start training</div>
+              </b-button>
             </b-col>
           </b-row>
         </b-container>
@@ -159,6 +166,7 @@ export default {
       categories: [],
       tags: [],
 			df: [],
+      loading: false
     }
   },
   methods:{
@@ -186,17 +194,17 @@ export default {
       var url = new URL(endpoint + "/updatelike")
       url.searchParams.append("id", id)
       url.searchParams.append("like", like)
-      var xhr = new XMLHttpRequest()
-      xhr.open("GET", url, false)
-      xhr.send()      
-      this.updateDf()
+      axios.get(url).then((res)=>{
+        this.updateDf()
+      })
     },
     retraining(){
+      this.loading=true
       var url = new URL(endpoint + "/retraining")
-      var xhr = new XMLHttpRequest()
-      xhr.open("GET", url, false)
-      xhr.send()      
-      this.updateDf()
+      axios.get(url).then((res)=>{
+        this.updateDf()
+        this.loading=false
+      })
     }
   },
   mounted() {
