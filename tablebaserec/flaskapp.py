@@ -62,7 +62,7 @@ def datas():
     if tag != "":
         tmp = tmp[tmp[tag] == 1]    
     # page の絞り込み
-    tmp = tmp.sort_values(col_lk, ascending=False)
+    tmp = tmp.sort_values([col_lk, "item"], ascending=False)
     tmp = tmp.reset_index(drop=True)
     tmp = tmp[(page - 1) * contentsIn1Page : page * contentsIn1Page]
     # return
@@ -128,6 +128,9 @@ def retraining():
     import modules
     _ = modules.update.main()
     del modules
+    # global df の更新
+    global df
+    df = reload_prediction()
     return ""
 
 
