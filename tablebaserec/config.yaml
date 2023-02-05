@@ -5,8 +5,7 @@ columns :
   item : "title"
   url : "url"
   tags : "tags"
-  categories :
-  - "author"
+  category : "author"
   # transaction
   like : "like"
   update : "update"

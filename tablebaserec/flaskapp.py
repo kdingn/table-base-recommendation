@@ -22,7 +22,7 @@ df = df.rename(
         config["columns"]["id"]: "id",
         config["columns"]["item"]: "item",
         config["columns"]["url"]: "url",
-        config["columns"]["categories"][0]: "category"
+        config["columns"]["category"]: "category"
     }
 )
 
