@@ -26,6 +26,7 @@ df = df.rename(
     }
 )
 
+
 app = Flask(__name__)
 app.config["JSON_AS_ASCII"] = False
 CORS(app)
@@ -37,6 +38,7 @@ def datas():
     contentsIn1Page = int(request.args.get("contentsIn1Page"))
     page = int(request.args.get("page"))
     category = str(request.args.get("category"))
+    tag = str(request.args.get("tag"))
 
     # train (or test) への絞り込み
     tmp = df.copy()
@@ -47,6 +49,9 @@ def datas():
     # 属性による絞り込み
     if category != "":
         tmp = tmp[tmp["category"] == category]
+    # Tagによる絞り込み
+    if tag != "":
+        tmp = tmp[tmp[tag] == 1]    
     # page の絞り込み
     tmp = tmp.sort_values(col_lk, ascending=False)
     tmp = tmp.reset_index(drop=True)
@@ -77,6 +82,15 @@ def categories():
     ])
     cts = cts.set_index("category")
     return cts[col_lk].to_json()
+
+
+@app.route("/tags", methods=["GET"])
+def tags():
+    tags = df.columns.to_list()
+    for rm in ["id", "item", "url", "category", col_lk]:
+        tags.remove(rm)
+    return tags
+
 
 
 if __name__ == "__main__":

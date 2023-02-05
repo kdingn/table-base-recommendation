@@ -26,6 +26,15 @@
               />
             </b-col>
             <b-col>
+              🎯 Tag<br>
+              <b-form-select
+                v-model="tag"
+                :options="tags"
+                @change="updateDf()"
+                class="mt-2"
+              />
+            </b-col>
+            <b-col>
               📖 Page<br>
               <b-form-spinbutton
                 id="top_page_select"
@@ -91,6 +100,7 @@ var defaultPage = 1
 var defaultContentsToShow = ""
 var defaultContentsIn1Page = 7*14
 var defaultCategory = ""
+var defaultTag = ""
 
 // function to get keys from sorted obj by values
 function keysFromObj(fruits){
@@ -109,7 +119,9 @@ export default {
       contentsToShow: defaultContentsToShow,
       contentsIn1Page: defaultContentsIn1Page,
       category: defaultCategory,
+      tag: defaultTag,
       categories: [],
+      tags: [],
 			df: [],
     }
   },
@@ -123,6 +135,7 @@ export default {
       url.searchParams.append("contentsToShow", this.contentsToShow)
       url.searchParams.append("contentsIn1Page", this.contentsIn1Page)
       url.searchParams.append("category", this.category)
+      url.searchParams.append("tag", this.tag)
       axios
         .get(url)
         .then((response) => (this.df = response.data))
@@ -133,6 +146,9 @@ export default {
     axios
       .get(endpoint + "/categories")
       .then((response) => (this.categories = keysFromObj(response.data)))
+      axios
+      .get(endpoint + "/tags")
+      .then((response) => (this.tags = response.data))
   }
 }
 </script>
