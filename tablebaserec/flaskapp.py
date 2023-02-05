@@ -1,4 +1,5 @@
 import pandas as pd
+import datetime
 import yaml
 import json
 from flask import Flask, request, send_file
@@ -16,16 +17,24 @@ for info in infos:
     f.close()
 
 col_lk = config["columns"]["like"]
-df = pd.read_parquet(config["datas"]["prediction"])
-df = df.rename(
-    columns={
-        config["columns"]["id"]: "id",
-        config["columns"]["item"]: "item",
-        config["columns"]["url"]: "url",
-        config["columns"]["category"]: "category"
-    }
-)
+col_id = config["columns"]["id"]
 
+def get_now():
+    DIFF_JST_FROM_UTC = 9
+    return datetime.datetime.utcnow() + datetime.timedelta(hours=DIFF_JST_FROM_UTC)
+
+def reload_prediction():
+    df = pd.read_parquet(config["datas"]["prediction"])
+    df = df.rename(
+        columns={
+            col_id: "id",
+            config["columns"]["item"]: "item",
+            config["columns"]["url"]: "url",
+            config["columns"]["category"]: "category"
+        }
+    )
+    return df
+df = reload_prediction()
 
 app = Flask(__name__)
 app.config["JSON_AS_ASCII"] = False
@@ -90,6 +99,36 @@ def tags():
     for rm in ["id", "item", "url", "category", col_lk]:
         tags.remove(rm)
     return tags
+
+
+@app.route("/updatelike", methods=["GET"])
+def updatelike():
+    idx = int(request.args.get("id"))
+    like = int(request.args.get("like"))
+    # 更新対象の読み込み
+    transaction = pd.read_parquet(config["datas"]["transaction"])
+    prediction = pd.read_parquet(config["datas"]["prediction"])
+    # transaction の更新
+    rows = pd.DataFrame({col_id: [idx]})
+    rows[col_lk] = like
+    rows["update"] = get_now()
+    transaction = pd.concat([transaction, rows]).reset_index(drop=True)
+    # pd.to_parquet(config["datas"]["transaction"], index=False)
+    # prediction の更新
+    prediction.loc[prediction[col_id]==idx, col_lk] = like
+    prediction.to_parquet(config["datas"]["prediction"], index=False)    
+    # global df の更新
+    global df
+    df = reload_prediction()
+    return ""
+
+
+@app.route("/retraining", methods=["GET"])
+def retraining():
+    import modules
+    _ = modules.update.main()
+    del modules
+    return ""
 
 
 if __name__ == "__main__":

@@ -8,7 +8,15 @@
           </h3>
           <b-row class="float-left">
             <b-col>
-              ⚙ Dataset<br>
+              ⚙ Mode<br>
+              <b-form-select
+                v-model="mode"
+                :options="['View', 'Review']"
+                class="mt-2"
+              />
+            </b-col>
+            <b-col>
+              📚 Dataset<br>
               <b-form-select
                 v-model="contentsToShow"
                 :options="['', 'train']"
@@ -46,6 +54,15 @@
                 class="mt-2"
               />
             </b-col>
+            <b-col>
+              ⚒ Re-training
+              <br>
+              <b-button
+                class="mt-2"
+                variant="primary"
+                @click="retraining()"
+              >Start training</b-button>
+            </b-col>
           </b-row>
         </b-container>
       </font>
@@ -59,6 +76,14 @@
           <div>
             【{{ n+(page-1)*contentsIn1Page+1 }}.】
             {{ el.like.toFixed(3) }}
+          </div>
+          <div v-if="mode==='Review'">
+            <b-button variant="success" size="sm" class="ml-1 my-1"
+              @click="updateLike(el.id, 1)"
+            >like</b-button>
+            <b-button variant="danger" size="sm" class="m-1"
+              @click="updateLike(el.id, 0)"
+            >not like</b-button>
           </div>
             <a :href="el.url" target="_blank">
               <b-img-lazy
@@ -91,8 +116,9 @@
       class="d-flex justify-content-center my-2"
     >
     <b-button
-        variant="primary"
+        variant="secondary"
         @click="scrollTop"
+        size="sm"
       >scroll to top</b-button>
     </b-container>
   </div>
@@ -104,6 +130,7 @@ import hostname from "raw-loader!../../setting/hostname.txt"
 import port from "raw-loader!../../setting/port_flask.txt"
 
 var endpoint = "http://" + hostname + ":" + port
+var defaultMode = "View"
 var defaultPage = 1
 var defaultContentsToShow = ""
 var defaultContentsIn1Page = 7*14
@@ -123,6 +150,7 @@ function keysFromObj(fruits){
 export default {
   data() {
     return {
+      mode: defaultMode,
       page: defaultPage,
       contentsToShow: defaultContentsToShow,
       contentsIn1Page: defaultContentsIn1Page,
@@ -153,6 +181,22 @@ export default {
         top: 0,
         behavior: "smooth"
       })
+    },
+    updateLike(id, like) {
+      var url = new URL(endpoint + "/updatelike")
+      url.searchParams.append("id", id)
+      url.searchParams.append("like", like)
+      var xhr = new XMLHttpRequest()
+      xhr.open("GET", url, false)
+      xhr.send()      
+      this.updateDf()
+    },
+    retraining(){
+      var url = new URL(endpoint + "/retraining")
+      var xhr = new XMLHttpRequest()
+      xhr.open("GET", url, false)
+      xhr.send()      
+      this.updateDf()
     }
   },
   mounted() {

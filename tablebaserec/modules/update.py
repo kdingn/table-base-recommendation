@@ -30,7 +30,7 @@ def add_one_hot_tags(df):
     tags = dftags.sum().sort_values(ascending=False)
     tags = tags[tags > 1]
     tags_cnt = min(
-        len(tags), int(len(dftags) / 10), 100  # tag の数  # 行数の10分の1  # べたうちでタグの最大数量を決定
+        len(tags), int(len(dftags) / 10), 200  # tag の数  # 行数の10分の1  # べたうちでタグの最大数量を決定
     )
     tags = tags[:tags_cnt]
     tags = list(tags.index)
