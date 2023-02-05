@@ -92,6 +92,5 @@ def tags():
     return tags
 
 
-
 if __name__ == "__main__":
     app.run(host=settings["hostname"], port=settings["port_flask"], debug=True)
