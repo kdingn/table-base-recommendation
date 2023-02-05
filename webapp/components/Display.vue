@@ -8,7 +8,7 @@
           </h3>
           <b-row class="float-left">
             <b-col>
-              ⚙ DatasetType<br>
+              ⚙ Dataset<br>
               <b-form-select
                 v-model="contentsToShow"
                 :options="['', 'train']"
