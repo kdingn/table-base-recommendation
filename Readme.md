@@ -1,4 +1,4 @@
-# Table Reccomendation
+# Table base Recommendation
 タグなどのテーブルベースのレコメンドアプリ
 
 ## 概要
