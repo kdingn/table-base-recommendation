@@ -1,5 +1,5 @@
-# Indivisual Reccomendation
-個人用のレコメンドアプリ
+# Table Reccomendation
+タグなどのテーブルベースのレコメンドアプリ
 
 ## 概要
 以下のファイルを用意することで簡単にレコメンド画面を作成できる．
